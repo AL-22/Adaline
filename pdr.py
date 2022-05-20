@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib.colors import ListedColormap
 
-""" Function to color the deciosion regions. """
+""" Function to color the deciosion regions.. """
 
 def plot_decision_regions(X, y, classifier, resolution = 0.02):
 
