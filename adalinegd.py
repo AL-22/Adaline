@@ -1,69 +1,69 @@
-importar numpy como np 
+import numpy as np 
 
-clase AdalineGD(objeto):
+class AdalineGD(object):
 
-	"""Clasificador ADAptive LInear NEuron.
- Parámetros
+	"""ADAptive LInear NEuron classifier.
+	Parameters
 	-----------
- eta : flotador
- Tasa de aprendizaje (entre 0,0 y 1,0)
+	eta : float
+		Learning rate (between 0.0 and 1.0)
 	n_iter : int
- Pasa por encima del conjunto de datos de entrenamiento.
- Atributos
+		Passes over the training dataset.
+	Attributes
 	-----------
 	w_ : 1d-array
- Pesas después del montaje.
- errors_ : lista
- Número de clasificaciones erróneas en cada época.
+		Weights after fitting.
+	errors_ : list
+		Number of misclassifications in every epoch.
 	"""
 
 	def __init__(self, eta = 0.01, n_iter = 50):
-		yo mismo. eta = eta
-		yo mismo. n_iter = n_iter
+		self.eta = eta
+		self.n_iter = n_iter
 
 	def fit(self, X, y):
 
-		""" Datos de entrenamiento de ajuste.
- Parámetros
+		""" Fit training data.
+		Parameters
 		-----------
 		X : {array-like}, shape = [n_samples, n_features]
- Vectores de entrenamiento,
- donde n_samples es el número de muestras y
- n_features es el número de características.
+			Training vectors,
+			where n_samples is the number of samples and
+			n_features is the number of features.
 		y : array-like, shape = [n_samples]
- Valores objetivo.
- Devolución
+			Target values.
+		Return
 		-------
- self : objeto
+		self : object
 		"""
 
-		yo mismo. w_ = np. ceros(1 + X. forma[1])
-		yo mismo. cost_ = []
+		self.w_ = np.zeros(1 + X.shape[1])
+		self.cost_ = []
 
-		para i en rango(self. n_iter):
-			output = yo. net_input(X)
-			errores = (y - salida)
-			yo mismo. w_[1:] += yo. eta * X. T. dot(errores))
-			yo mismo. w_[0] += yo. eta * errores. suma()
-			costo = (errores ** 2). suma() / 2.0
-			yo mismo. cost_. append(costo))
+		for i in range(self.n_iter):
+			output = self.net_input(X)
+			errors = (y - output)
+			self.w_[1:] += self.eta * X.T.dot(errors)
+			self.w_[0] += self.eta * errors.sum()
+			cost = (errors ** 2).sum() / 2.0
+			self.cost_.append(cost)
 
-		devolverse a sí mismo
+		return self
 
 	def net_input(self, X):
 
-		""" Calcular la entrada neta """
+		""" Calculate net input """
 
-		devolver np. punto(X, yo. w_[1:]) + yo. w_[0]
+		return np.dot(X, self.w_[1:]) + self.w_[0]
 
-	activación def(self, X):
+	def activation(self, X):
 
-		""" Activar lineal de cómputo """
+		""" Compute linear activation """
 
-		volver a sí mismo. net_input(X)
+		return self.net_input(X)
 
 	def predict(self, X):
 
-		""" Etiqueta de clase de retorno después del paso de la unidad """
+		""" Return class label after unit step """
 
-		devolver np. donde(sí mismo. activación(X) >= 0.0, 1, -1)
+		return np.where(self.activation(X) >= 0.0, 1, -1)
