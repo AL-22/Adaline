@@ -10,7 +10,7 @@ class AdalineSGD(object):
 	eta : float
 		Learning rate (between 0.0 and 1.0)
 	n_iter : int
-		Passes over the training dataset.
+		Passes over the training dataset..
 	Attributes
 	-----------
 	w_ : 1d-array
