@@ -1,131 +1,131 @@
-importar numpy como np 
+import numpy as np 
 
-de numpy. semilla de importación aleatoria
+from numpy.random import seed
 
-clase AdalineSGD(object):
+class AdalineSGD(object):
 
-	""" Clasificador ADAptive LInear NEuron.
- Parámetros
+	""" ADAptive LInear NEuron classifier.
+	Parameters
 	-----------
- eta : flotador
- Tasa de aprendizaje (entre 0,0 y 1,0)
+	eta : float
+		Learning rate (between 0.0 and 1.0)
 	n_iter : int
- Pasa por encima del conjunto de datos de entrenamiento.
- Atributos
+		Passes over the training dataset.
+	Attributes
 	-----------
 	w_ : 1d-array
- Pesas después del montaje.
- errors_ : lista
- Número de clasificaciones erróneas en cada época.
- shuffle : bool (sordo: Verdadero)
- Baraja los datos de entrenamiento en cada época si es verdadero 
- para prevenir ciclos.
- random_state : int (valor predeterminado: Ninguno)
- Establecer un estado aleatorio para barajar y 
- inicializando los pesos.
+		Weights after fitting.
+	errors_ : list
+		Number of misclassifications in every epoch.
+	shuffle : bool (deafult: True)
+		Shuffles training data every epoch if True 
+		to prevent cycles.
+	random_state : int (default: None)
+		Set random state for shuffling and 
+		initializing the weights.
 	"""
 
 	def __init__(self, eta = 0.01, n_iter = 10, shuffle= True,
-				random_state = Ninguno):
+				random_state = None):
 
-		yo mismo. eta = eta
-		yo mismo. n_iter = n_iter
-		yo mismo. w_initialization = Falso
-		yo mismo. shuffle = shuffle
+		self.eta = eta
+		self.n_iter = n_iter
+		self.w_initialization = False
+		self.shuffle = shuffle
 
-		si random_state:
-			semilla(random_state)
+		if random_state:
+			seed(random_state)
 
 	def fit(self, X, y):
 
-		""" Datos de entrenamiento de ajuste.
- Parámetros
+		""" Fit training data.
+		Parameters
 		------------
 		X : {array-like}, shape = [n_samples, n_features]
- Vectores de entrenamiento, donde n_samples es el
- número de muestras y n_features es el número
- de características.
+			Training vectors, where n_samples is the
+			number of samples and n_features is the number
+			of features.
 		y : array-like, shape = [n_samples]
- Valores objetivo.
- Devolución
+			Target values.
+		Return
 		-------
- self : objeto
+		self : object
 		"""
 
-		yo mismo. _initialize_weights(X. forma[1])
-		yo mismo. cost_ = []
+		self._initialize_weights(X.shape[1])
+		self.cost_ = []
 
-		para i en rango(self. n_iter):
+		for i in range(self.n_iter):
 
-			si es uno mismo. barajar:
-				X, y = yo. _shuffle(X, y)
+			if self.shuffle:
+				X, y = self._shuffle(X, y)
 
-			costar = []
-			para xi, objetivo en zip(X, y):
-				costo. apéndice (sí mismo. _update_weights(xi, objetivo))
+			cost = []
+			for xi, target in zip(X, y):
+				cost.append(self._update_weights(xi, target))
 
-			avg_cost = suma(costo) / len(y)
-			yo mismo. cost_. apéndice(avg_cost)
+			avg_cost = sum(cost) / len(y)
+			self.cost_.append(avg_cost)
 
-		devolverse a sí mismo
+		return self
 
 	def partial_fit(self, X, y):
 
-		""" Ajustar los datos de entrenamiento sin reinicializar los pesos """
+		""" Fit training data without reinitializing the weights """
 
-		si no es uno mismo. w_initialized:
-			yo mismo. _initialize_weights(X. forma[1])
+		if not self.w_initialized:
+			self._initialize_weights(X.shape[1])
 
-		si es y. ravel(). forma[0] > 1:
+		if y.ravel().shape[0] > 1:
 
-			para xi, objetivo en zip(X, y):
-				yo mismo. _update_weights(xi, objetivo)
-		de lo contrario:
-			yo mismo. _update_weights(X, y)
+			for xi, target in zip(X, y):
+				self._update_weights(xi, target)
+		else:
+			self._update_weights(X, y)
 
-		devolverse a sí mismo
+		return self
 
 	def _shuffle(self, X, y):
 
-		""" Mezclar datos de entrenamiento """
+		""" Shuffle training data """
 
-		r = np. aleatorio. permutación(len(y))
+		r = np.random.permutation(len(y))
 
 		return X[r], y[r]
 
 	def _initialize_weights(self, m):
 
-		""" Inicializar pesos a ceros """
+		""" Initialize weights to zeros """
 
-		yo mismo. w_ = np. ceros (1 + m)
-		yo mismo. w_initialized = Verdadero
+		self.w_ = np.zeros(1 + m)
+		self.w_initialized = True
 
 	def _update_weights(self, xi, target):
 
-		""" Aplicar la regla de aprendizaje Adaline para actualizar los pesos """
+		""" Apply Adaline learning rule to update the weights """
 
-		output = yo. net_input(xi))
-		error = (destino - salida)
-		yo mismo. w_[1:] += yo. eta * xi. punto(error)
-		yo mismo. w_[0] += yo. eta * error
-		costo = 0.5 * (error ** 2)
+		output = self.net_input(xi)
+		error = (target - output)
+		self.w_[1:] += self.eta * xi.dot(error)
+		self.w_[0] += self.eta * error
+		cost = 0.5 * (error ** 2)
 
-		costo de devolución
+		return cost
 
 	def net_input(self, X):
 
-		""" Calcular la entrada neta """
+		""" Calculate net input """
 
-		devolver np. punto(X, yo. w_[1:]) + yo. w_[0]
+		return np.dot(X, self.w_[1:]) + self.w_[0]
 
-	activación def(self, X):
+	def activation(self, X):
 
-		""" Activar lineal de cómputo """
+		""" Compute linear activation """
 
-		volver a sí mismo. net_input(X)
+		return self.net_input(X)
 
 	def predict(self, X):
 
-		""" Etiqueta de clase de retorno después del paso de la unidad """
+		""" Return class label after the unit step """
 
-		devolver np. donde(sí mismo. activación(X) >= 0.0, 1, -1)
+		return np.where(self.activation(X) >= 0.0, 1, -1)
